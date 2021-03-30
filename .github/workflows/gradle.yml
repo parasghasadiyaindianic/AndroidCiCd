@@ -45,8 +45,8 @@ jobs:
 #        file: AndroidCICD.apk
 #        notifyTesters: true
 #        debug: true
-  package:
-    name: Generate APK
+  deploy:
+    name: Distribut For Alpha Testing
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
@@ -55,11 +55,6 @@ jobs:
       - name: Build debug APK
         run: ./gradlew assembleDebug
 
-  deploy:
-    needs: [package]
-    name: Distribut For Alpha Testing
-    runs-on: ubuntu-latest
-    steps:
       - name: Upload to app center
         uses: wzieba/AppCenter-Github-Action@v1
         with:
