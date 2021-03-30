@@ -24,22 +24,24 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew assembleDebug --stacktrace
-#    - name: Upload APK
-#      uses: actions/upload-artifact@v2
-#      with:
-#          name: AndroidCICD.apk
-#          path: app/build/outputs/apk/debug/app-debug.apk
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v2
+      with:
+        name: AndroidCICD.apk
+        path: app/build/outputs/apk/debug/app-debug.apk
+
     - name: Download latest artifact
       uses: actions/download-artifact@v2
       with:
-          name: AndroidCICD.apk
+        name: AndroidCICD.apk
 
     - name: Upload to app center
       uses: wzieba/AppCenter-Github-Action@v1
       with:
-          appName: paras.ghasadiya-indianic.com/AndroidCICD
-          token:  ${{ secrets.APP_CENTER_TOKEN }}
-          group: AlphaTesters
-          file: AndroidCICD.apk
-          notifyTesters: true
-          debug: true
+        appName: paras.ghasadiya-indianic.com/AndroidCICD
+        token:  ${{ secrets.APP_CENTER_TOKEN }}
+        group: AlphaTesters
+        file: AndroidCICD.apk
+        notifyTesters: true
+        debug: true
