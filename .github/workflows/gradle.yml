@@ -22,26 +22,61 @@ jobs:
         java-version: 1.8
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-    - name: Build with Gradle
-      run: ./gradlew assembleDebug --stacktrace
+#    - name: Build with Gradle
+#      run: ./gradlew assembleDebug --stacktrace
+#
+#    - name: Upload APK
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: AndroidCICD.apk
+#        path: app/build/outputs/apk/debug/app-debug.apk
+#
+#    - name: Download latest artifact
+#      uses: actions/download-artifact@v2
+#      with:
+#        name: AndroidCICD.apk
+#
+#    - name: Upload to app center
+#      uses: wzieba/AppCenter-Github-Action@v1
+#      with:
+#        appName: paras.ghasadiya-indianic.com/AndroidCICD
+#        token:  ${{ secrets.APP_CENTER_TOKEN }}
+#        group: AlphaTesters
+#        file: AndroidCICD.apk
+#        notifyTesters: true
+#        debug: true
+  package:
+    name: Generate APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v2
-      with:
-        name: AndroidCICD.apk
-        path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Build debug APK
+        run: ./gradlew assembleDebug
 
-    - name: Download latest artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: AndroidCICD.apk
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: AndroidCICD.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
 
-    - name: Upload to app center
-      uses: wzieba/AppCenter-Github-Action@v1
-      with:
-        appName: paras.ghasadiya-indianic.com/AndroidCICD
-        token:  ${{ secrets.APP_CENTER_TOKEN }}
-        group: AlphaTesters
-        file: AndroidCICD.apk
-        notifyTesters: true
-        debug: true
+  deploy:
+    needs: [package]
+    name: Distribut For Alpha Testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download latest artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: AndroidCICD.apk
+
+      - name: Upload to app center
+        uses: wzieba/AppCenter-Github-Action@v1
+        with:
+          appName: paras.ghasadiya-indianic.com/AndroidCICD
+          token:  ${{ secrets.APP_CENTER_TOKEN }}
+          group: AlphaTesters
+          file: AndroidCICD.apk
+          notifyTesters: true
+          debug: true
