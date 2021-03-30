@@ -54,37 +54,24 @@ jobs:
 
       - name: Build debug APK
         run: ./gradlew assembleDebug
-      - name: upload artefact to App Center
+
+  deploy:
+    needs: [package]
+    name: Distribut For Alpha Testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload to app center
         uses: wzieba/AppCenter-Github-Action@v1
         with:
           appName: paras.ghasadiya-indianic.com/AndroidCICD
-          token: ${{secrets.APP_CENTER_TOKEN}}
+          token:  ${{ secrets.APP_CENTER_TOKEN }}
           group: Collaborators
           file: app/build/outputs/apk/debug/app-debug.apk
           notifyTesters: true
-          debug: false
-      - name: Upload APK
-        uses: actions/upload-artifact@v2
-        with:
-          name: AndroidCICD.apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          debug: true
 
-#  deploy:
-#    needs: [package]
-#    name: Distribut For Alpha Testing
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Download latest artifact
-#        uses: actions/download-artifact@v2
-#        with:
-#          name: AndroidCICD.apk
-#
-#      - name: Upload to app center
-#        uses: wzieba/AppCenter-Github-Action@v1
-#        with:
-#          appName: paras.ghasadiya-indianic.com/AndroidCICD
-#          token:  ${{ secrets.APP_CENTER_TOKEN }}
-#          group: AlphaTesters
-#          file: AndroidCICD.apk
-#          notifyTesters: true
-#          debug: true
+      - name: Upload APK
+          uses: actions/upload-artifact@v2
+          with:
+            name: AndroidCICD.zip
+            path: app/build/outputs/apk/debug/app-debug.apk
